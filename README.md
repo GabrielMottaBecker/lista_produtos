@@ -1,6 +1,6 @@
 # mobile_arquitetura_02
 
-Atividade 04 — Refatoração Arquitetural Flutter  
+Atividade 05 — Refatoração Arquitetural Flutter  
 Disciplina: Desenvolvimento para Dispositivos Móveis II  
 Material de referência: Arquitetura - Aula 2 — Jefferson Rodrigo Speck
 
