@@ -18,25 +18,11 @@ class ProductRepositoryImpl implements ProductRepository {
     try {
       final models = await remoteDatasource.getProducts();
       localDatasource.saveCache(models);
-      return models
-          .map((m) => Product(
-                id: m.id,
-                title: m.title,
-                price: m.price,
-                image: m.image,
-              ))
-          .toList();
+      return models.map((m) => m.toEntity()).toList();
     } catch (e) {
       if (localDatasource.hasCache) {
         final cached = localDatasource.getCache();
-        return cached
-            .map((m) => Product(
-                  id: m.id,
-                  title: m.title,
-                  price: m.price,
-                  image: m.image,
-                ))
-            .toList();
+        return cached.map((m) => m.toEntity()).toList();
       }
       throw Failure(e.toString());
     }

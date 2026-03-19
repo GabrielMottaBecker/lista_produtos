@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'core/network/http_client.dart';
+import 'core/routes/app_routes.dart';
 import 'data/datasources/product_local_datasource.dart';
 import 'data/datasources/product_remote_datasource.dart';
 import 'data/repositories/product_repository_impl.dart';
+import 'presentation/pages/home_page.dart';
+import 'presentation/pages/product_detail_page.dart';
 import 'presentation/pages/product_page.dart';
 import 'presentation/viewmodels/product_viewmodel.dart';
 
@@ -27,13 +30,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Product App',
+      title: 'ShopApp',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6A1B9A)),
         useMaterial3: true,
+        fontFamily: 'Roboto',
       ),
-      home: ProductPage(viewModel: viewModel),
+      initialRoute: AppRoutes.home,
+      routes: {
+        AppRoutes.home: (_) => const HomePage(),
+        AppRoutes.products: (_) => ProductPage(viewModel: viewModel),
+        AppRoutes.productDetail: (_) => const ProductDetailPage(),
+      },
     );
   }
 }
