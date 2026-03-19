@@ -156,8 +156,8 @@ flutter doctor
 
 **1. Clone o repositório**
 ```bash
-git clone https://github.com/GabrielMottaBecker/mobile_arquitetura_02.git
-cd mobile_arquitetura_02
+git clone https://github.com/GabrielMottaBecker/lista_produtos.git
+cd lista_produtos
 ```
 
 **2. Instale as dependências**
