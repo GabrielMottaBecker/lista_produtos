@@ -1,0 +1,23 @@
+name: mobile_arquitetura_02
+description: "Atividade 02 - CRUD Completo com Flutter e FakeStore API"
+publish_to: 'none'
+version: 2.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  http: ^1.2.0
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
