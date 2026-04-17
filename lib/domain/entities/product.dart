@@ -12,6 +12,9 @@ class Product {
   /// false → produto sincronizado com a API remota
   final bool isLocal;
 
+  /// true → produto marcado como favorito pelo usuário
+  final bool isFavorite;
+
   const Product({
     this.id,
     required this.title,
@@ -22,6 +25,7 @@ class Product {
     this.ratingRate = 0.0,
     this.ratingCount = 0,
     this.isLocal = false,
+    this.isFavorite = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -58,6 +62,7 @@ class Product {
     double? ratingRate,
     int? ratingCount,
     bool? isLocal,
+    bool? isFavorite,
   }) {
     return Product(
       id: id ?? this.id,
@@ -69,6 +74,7 @@ class Product {
       ratingRate: ratingRate ?? this.ratingRate,
       ratingCount: ratingCount ?? this.ratingCount,
       isLocal: isLocal ?? this.isLocal,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 }

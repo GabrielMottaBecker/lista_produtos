@@ -109,4 +109,22 @@ class ProductViewModel {
       return false;
     }
   }
+
+  // ── Favorites ───────────────────────────────────────────────────
+
+  /// Alterna o estado de favorito do produto com o [id] informado.
+  void toggleFavorite(int? id) {
+    if (id == null) return;
+    final list = state.value.products.map((p) {
+      return p.id == id ? p.copyWith(isFavorite: !p.isFavorite) : p;
+    }).toList();
+    state.value = state.value.copyWith(products: list);
+  }
+
+  /// Alterna o filtro "mostrar apenas favoritos".
+  void toggleFavoriteFilter() {
+    state.value = state.value.copyWith(
+      showOnlyFavorites: !state.value.showOnlyFavorites,
+    );
+  }
 }

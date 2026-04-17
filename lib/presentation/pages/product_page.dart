@@ -58,6 +58,21 @@ class _ProductPageState extends State<ProductPage> {
           tooltip: 'Voltar ao início',
         ),
         actions: [
+          // Botão filtro de favoritos
+          ValueListenableBuilder<ProductState>(
+            valueListenable: widget.viewModel.state,
+            builder: (_, state, __) {
+              final isFiltering = state.showOnlyFavorites;
+              return IconButton(
+                icon: Icon(
+                  isFiltering ? Icons.favorite : Icons.favorite_border,
+                  color: isFiltering ? Colors.pinkAccent : Colors.white,
+                ),
+                tooltip: isFiltering ? 'Mostrar todos' : 'Só favoritos',
+                onPressed: widget.viewModel.toggleFavoriteFilter,
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.sync, color: Colors.white),
             tooltip: 'Sincronizar com API',
@@ -170,10 +185,12 @@ class _ProductPageState extends State<ProductPage> {
                   state.products.where((p) => !p.isLocal).length;
               final totalLocal =
                   state.products.where((p) => p.isLocal).length;
+              final favoriteCount = state.favoriteCount;
+              final visibleProducts = state.visibleProducts;
 
               return Column(
                 children: [
-                  // Cabeçalho com contadores API / LOCAL
+                  // Cabeçalho com contadores
                   Container(
                     width: double.infinity,
                     color: const Color(0xFF6A1B9A).withOpacity(0.05),
@@ -182,13 +199,21 @@ class _ProductPageState extends State<ProductPage> {
                     child: Row(
                       children: [
                         Text(
-                          '${state.products.length} produtos',
+                          state.showOnlyFavorites
+                              ? '$favoriteCount favorito${favoriteCount != 1 ? 's' : ''}'
+                              : '${state.products.length} produtos',
                           style: const TextStyle(
                             color: Color(0xFF6A1B9A),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const Spacer(),
+                        if (favoriteCount > 0)
+                          _OriginChip(
+                            label: '★ $favoriteCount',
+                            color: Colors.pinkAccent,
+                          ),
+                        if (favoriteCount > 0) const SizedBox(width: 6),
                         _OriginChip(
                           label: 'API $totalApi',
                           color: const Color(0xFF1565C0),
@@ -201,19 +226,42 @@ class _ProductPageState extends State<ProductPage> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
-                      itemCount: state.products.length,
-                      itemBuilder: (context, index) {
-                        final product = state.products[index];
-                        return _ProductCard(
-                          product: product,
-                          viewModel: widget.viewModel,
-                        );
-                      },
+                  // Aviso quando o filtro está ativo mas não há favoritos
+                  if (state.showOnlyFavorites && visibleProducts.isEmpty)
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.favorite_border,
+                                size: 64, color: Colors.grey),
+                            const SizedBox(height: 16),
+                            const Text('Nenhum favorito ainda.',
+                                style: TextStyle(color: Colors.grey)),
+                            const SizedBox(height: 8),
+                            TextButton.icon(
+                              onPressed: widget.viewModel.toggleFavoriteFilter,
+                              icon: const Icon(Icons.list),
+                              label: const Text('Ver todos os produtos'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
+                        itemCount: visibleProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = visibleProducts[index];
+                          return _ProductCard(
+                            product: product,
+                            viewModel: widget.viewModel,
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               );
           }
@@ -263,7 +311,8 @@ class _ProductCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      elevation: 2,
+      elevation: product.isFavorite ? 4 : 2,
+      color: product.isFavorite ? Colors.pink.shade50 : Colors.white,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () {
@@ -361,7 +410,17 @@ class _ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey),
+              // Botão de favorito
+              IconButton(
+                icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: product.isFavorite ? Colors.pinkAccent : Colors.grey,
+                ),
+                tooltip: product.isFavorite
+                    ? 'Remover dos favoritos'
+                    : 'Adicionar aos favoritos',
+                onPressed: () => viewModel.toggleFavorite(product.id),
+              ),
             ],
           ),
         ),
